@@ -16,8 +16,6 @@ contract ReentrantActor {
         if (storedCall.length == 0) {
         	return;
         }
-        console2.log("reentering");
-        console2.logBytes(storedCall);
         (bool success, ) = msg.sender.call(storedCall);
     }
 }

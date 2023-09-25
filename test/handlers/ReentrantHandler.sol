@@ -10,12 +10,12 @@ contract ReentrantHandler is Test, BaseActorHandler {
 
     Reentrant private _reentrant;
 
-    constructor(address reentrant, address callStorage) BaseActorHandler(callStorage) {
+    constructor(address reentrant, address payable callStorage) BaseActorHandler(callStorage) {
         _reentrant = Reentrant(reentrant);
-        vm.deal(reentrant, 10 ether);
     }
 
     function deposit(uint96 amount) external createActor() {
+        console2.log("depositing");
         vm.deal(currentActor, amount);
 
         vm.prank(currentActor);
@@ -23,6 +23,7 @@ contract ReentrantHandler is Test, BaseActorHandler {
     }
 
     function withdraw(uint256 actorSeed) external useActor(actorSeed) {
+        console2.log("withdrawing");
         vm.prank(currentActor);
         _reentrant.withdraw();
     }

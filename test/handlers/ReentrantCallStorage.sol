@@ -1,14 +1,16 @@
 pragma solidity ^0.8.13;
 
-import {console2} from "forge-std/console2.sol";
+import {Test, console2} from "forge-std/Test.sol";
+// import {console2} from "forge-std/console2.sol";
 
 
-contract ReentrantCallStorage {
+contract ReentrantCallStorage is Test {
 
     bytes private _storedCall;
 
     modifier storeCall() {
         console2.log("storing call");
+        console2.logBytes(msg.data[:4]);
         _storedCall = msg.data;
         _;
     }
@@ -17,9 +19,12 @@ contract ReentrantCallStorage {
         return _storedCall;
     }
 
-    function deposit() external payable storeCall {
-    }
+    fallback() external storeCall {}
+    receive() external payable storeCall {}
 
-    function withdraw() external storeCall {
-    }
+    // function deposit() external payable storeCall {
+    // }
+
+    // function withdraw() external storeCall {
+    // }
 }

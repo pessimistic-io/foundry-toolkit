@@ -13,7 +13,7 @@ contract BaseActorHandler {
     ReentrantCallStorage private _callStorage;
     uint256 constant REENTRANT_ACTOR_PROBABILITY_PERCENT = 50;
 
-    constructor(address callStorage) {
+    constructor(address payable callStorage) {
         _callStorage = ReentrantCallStorage(callStorage);
     }
 

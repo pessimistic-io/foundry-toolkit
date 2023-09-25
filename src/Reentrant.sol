@@ -10,8 +10,11 @@ contract Reentrant {
 
     function withdraw() external {
     	uint256 amount = balances[msg.sender];
+    	if (amount == 0) {
+    		return;
+    	}
     	(bool success, ) = msg.sender.call{value: amount}("");
-    	require(success);
+    	// require(success);
     	balances[msg.sender] = 0;
     }
 }

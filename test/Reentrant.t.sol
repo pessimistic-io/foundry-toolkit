@@ -13,27 +13,28 @@ contract ReentrantTest is Test {
 
     function setUp() public {
         reentrant = new Reentrant();
+        vm.deal(address(reentrant), 10 ether);
+        excludeContract(address(reentrant));
 
-        ReentrantCallStorage reentrantCallStorage = new ReentrantCallStorage();
-        targetContract(address(reentrantCallStorage));
-
+        address payable reentrantCallStorage = _deployReentrantCallStorage();
 
         reentrantHandler = new ReentrantHandler(
             address(reentrant),
-            address(reentrantCallStorage)
+            reentrantCallStorage
         );
-
-
         bytes4[] memory selectors = new bytes4[](2);
         selectors[0] = reentrantHandler.deposit.selector;
         selectors[1] = reentrantHandler.withdraw.selector;
-
         targetSelector(FuzzSelector({
             addr: address(reentrantHandler),
             selectors: selectors
         }));
+    }
 
-        targetContract(address(reentrantHandler));
+    function _deployReentrantCallStorage() internal returns(address payable) {
+        Reentrant reentrantToReplace = new Reentrant();
+        deployCodeTo("./ReentrantCallStorage.sol", address(reentrantToReplace));
+        return payable(address(reentrantToReplace));
     }
 
     function invariant_ethSupplyDidNotDecrease() public {
